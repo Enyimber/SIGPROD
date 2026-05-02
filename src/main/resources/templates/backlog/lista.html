@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
+<head th:replace="~{fragments/base :: head('Backlog')}"></head>
+<body class="bg-light">
+<div th:replace="~{fragments/base :: navbar}"></div>
+<div class="container-fluid py-4 px-4">
+  <div th:replace="~{fragments/base :: alertas}"></div>
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+      <nav aria-label="breadcrumb"><ol class="breadcrumb small mb-1">
+        <li class="breadcrumb-item"><a th:href="@{/proyectos}">Proyectos</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/proyectos/{id}(id=${proyecto.id})}" th:text="${proyecto.nombre}">P</a></li>
+        <li class="breadcrumb-item active">Backlog</li>
+      </ol></nav>
+      <h4 class="fw-bold mb-0"><i class="bi bi-journal-text text-primary me-2"></i>Backlog — <span th:text="${proyecto.nombre}">P</span></h4>
+    </div>
+    <a th:href="@{/backlog/{id}/nueva(id=${proyecto.id})}" class="btn btn-primary rounded-pill px-4">
+      <i class="bi bi-plus-lg me-1"></i>Nueva historia</a>
+  </div>
+  <div th:if="${historias.empty}" class="text-center text-muted py-5">
+    <i class="bi bi-journal-x fs-1 d-block mb-3"></i><p>El backlog está vacío.</p></div>
+  <div class="card border-0 shadow-sm rounded-4" th:unless="${historias.empty}">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-light">
+            <tr><th>Prioridad</th><th>Historia</th><th>Estado</th><th>Puntos</th><th>Sprint</th><th class="text-end">Acciones</th></tr>
+          </thead>
+          <tbody>
+            <tr th:each="h:${historias}">
+              <td><span class="badge"
+                    th:classappend="${h.prioridadMoscow?.name()=='MUST'}?'bg-danger':(${h.prioridadMoscow?.name()=='SHOULD'}?'bg-warning text-dark':(${h.prioridadMoscow?.name()=='COULD'}?'bg-info text-dark':'bg-secondary'))"
+                    th:text="${h.prioridadMoscow}">M</span></td>
+              <td>
+                <a th:href="@{/backlog/historia/{id}(id=${h.id})}" class="fw-semibold text-decoration-none text-dark" th:text="${h.titulo}">T</a>
+                <p class="text-muted small mb-0" th:text="${#strings.abbreviate(h.narrativa?:'',60)}"></p>
+              </td>
+              <td><span class="badge rounded-pill"
+                    th:classappend="${h.estado.name()=='BACKLOG'}?'bg-secondary':(${h.estado.name()=='ACEPTADA'}?'bg-success':(${h.estado.name()=='RECHAZADA'}?'bg-danger':'bg-primary'))"
+                    th:text="${h.estado}">E</span></td>
+              <td class="text-center" th:text="${h.estimacionPuntos?:'-'}">-</td>
+              <td><span th:if="${h.sprintId==null}" class="text-muted small">Sin sprint</span>
+                  <span th:unless="${h.sprintId==null}" class="badge bg-primary bg-opacity-10 text-primary small">Asignado</span></td>
+              <td class="text-end">
+                <div class="d-flex gap-1 justify-content-end">
+                  <a th:href="@{/backlog/historia/{id}(id=${h.id})}" class="btn btn-sm btn-outline-primary rounded-pill"><i class="bi bi-eye"></i></a>
+                  <form th:if="${h.estado.name()=='PARA_ACEPTACION'}" th:action="@{/backlog/historia/{id}/aceptar(id=${h.id})}" method="post" sec:authorize="hasAnyRole('ADMIN','PRODUCT_OWNER')">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit" class="btn btn-sm btn-success rounded-pill" title="Aceptar"><i class="bi bi-check-lg"></i></button>
+                  </form>
+                  <form th:if="${h.estado.name()=='PARA_ACEPTACION'}" th:action="@{/backlog/historia/{id}/rechazar(id=${h.id})}" method="post" sec:authorize="hasAnyRole('ADMIN','PRODUCT_OWNER')">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill"><i class="bi bi-x-lg"></i></button>
+                  </form>
+                  <form th:action="@{/backlog/historia/{id}/eliminar(id=${h.id})}" method="post" onsubmit="return confirm('¿Eliminar?')">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill"><i class="bi bi-trash"></i></button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div th:replace="~{fragments/base :: scripts}"></div>
+</body>
+</html>

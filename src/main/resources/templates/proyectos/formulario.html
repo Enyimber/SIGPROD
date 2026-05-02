@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/base :: head('Proyecto')}"></head>
+<body class="bg-light">
+<div th:replace="~{fragments/base :: navbar}"></div>
+<div class="container py-4" style="max-width:740px">
+  <div th:replace="~{fragments/base :: alertas}"></div>
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb small">
+      <li class="breadcrumb-item"><a th:href="@{/proyectos}">Proyectos</a></li>
+      <li class="breadcrumb-item active" th:text="${proyecto.id!=null?'Editar':'Nuevo proyecto'}">Form</li>
+    </ol>
+  </nav>
+  <div class="card border-0 shadow-sm rounded-4">
+    <div class="card-header bg-white border-0 px-4 pt-4 pb-0">
+      <h5 class="fw-bold mb-0"><i class="bi bi-kanban text-primary me-2"></i>
+        <span th:text="${proyecto.id!=null?'Editar proyecto':'Nuevo proyecto'}">Proyecto</span></h5>
+    </div>
+    <div class="card-body p-4">
+      <form th:action="${proyecto.id!=null?'/proyectos/'+proyecto.id+'/editar':'/proyectos/nuevo'}"
+            th:object="${proyecto}" method="post" novalidate>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label fw-semibold">Nombre *</label>
+            <input type="text" th:field="*{nombre}" class="form-control" placeholder="Nombre del proyecto" required/>
+          </div>
+          <div class="col-12">
+            <label class="form-label fw-semibold">Descripción</label>
+            <textarea th:field="*{descripcion}" class="form-control" rows="3"></textarea>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Cliente *</label>
+            <input type="text" th:field="*{cliente}" class="form-control" placeholder="Nombre del cliente" required/>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Metodología</label>
+            <select th:field="*{metodologia}" class="form-select">
+              <option value="">-- Seleccionar --</option>
+              <option th:each="m:${metodologias}" th:value="${m.name()}" th:text="${m.name()}">M</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Fecha inicio</label>
+            <input type="date" th:field="*{fechaInicio}" class="form-control"/>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Fecha fin</label>
+            <input type="date" th:field="*{fechaFin}" class="form-control"/>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Presupuesto (COP)</label>
+            <div class="input-group">
+              <span class="input-group-text">$</span>
+              <input type="number" th:field="*{presupuesto}" class="form-control" min="0"/>
+            </div>
+          </div>
+          <div class="col-md-6" th:if="${proyecto.id!=null}">
+            <label class="form-label fw-semibold">Estado</label>
+            <select th:field="*{estado}" class="form-select">
+              <option th:each="e:${estados}" th:value="${e.name()}" th:text="${e.name()}">E</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Product Owner</label>
+            <select th:field="*{productOwnerId}" class="form-select">
+              <option value="">-- Sin asignar --</option>
+              <option th:each="u:${usuarios}" th:value="${u.id}"
+                      th:text="${u.nombres+' '+u.apellidos+' ('+u.rolSistema+')'}">U</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Project Manager</label>
+            <select th:field="*{projectManagerId}" class="form-select">
+              <option value="">-- Sin asignar --</option>
+              <option th:each="u:${usuarios}" th:value="${u.id}"
+                      th:text="${u.nombres+' '+u.apellidos+' ('+u.rolSistema+')'}">U</option>
+            </select>
+          </div>
+        </div>
+        <div class="d-flex gap-2 mt-4">
+          <button type="submit" class="btn btn-primary rounded-pill px-4">
+            <i class="bi bi-save me-1"></i><span th:text="${proyecto.id!=null?'Guardar cambios':'Crear proyecto'}">Guardar</span>
+          </button>
+          <a th:href="@{/proyectos}" class="btn btn-outline-secondary rounded-pill px-4">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div th:replace="~{fragments/base :: scripts}"></div>
+</body>
+</html>

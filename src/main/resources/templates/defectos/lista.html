@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/base :: head('Defectos')}"></head>
+<body class="bg-light">
+<div th:replace="~{fragments/base :: navbar}"></div>
+<div class="container-fluid py-4 px-4">
+  <div th:replace="~{fragments/base :: alertas}"></div>
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-1">
+          <li class="breadcrumb-item"><a th:href="@{/proyectos}">Proyectos</a></li>
+          <li class="breadcrumb-item"><a th:href="@{/proyectos/{id}(id=${proyecto.id})}" th:text="${proyecto.nombre}">Proyecto</a></li>
+          <li class="breadcrumb-item active">Defectos</li>
+        </ol>
+      </nav>
+      <h4 class="fw-bold mb-0"><i class="bi bi-bug text-danger me-2"></i>Defectos</h4>
+    </div>
+    <a th:href="@{/defectos/proyecto/{id}/nuevo(id=${proyecto.id})}" class="btn btn-danger">
+      <i class="bi bi-plus-lg me-1"></i>Reportar Defecto
+    </a>
+  </div>
+  <div class="card shadow-sm border-0 rounded-4">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead><tr><th>Título</th><th>Severidad</th><th>Prioridad</th><th>Estado</th><th>Ambiente</th><th></th></tr></thead>
+          <tbody>
+            <tr th:each="d : ${defectos}">
+              <td th:text="${d.titulo}">Título</td>
+              <td>
+                <span class="badge"
+                      th:classappend="${d.severidad.name() == 'CRITICO'} ? 'bg-danger' : (${d.severidad.name() == 'MAYOR'} ? 'bg-warning text-dark' : 'bg-secondary')"
+                      th:text="${d.severidad}">SEV</span>
+              </td>
+              <td><span class="badge bg-primary" th:text="${d.prioridad}">PRI</span></td>
+              <td><span class="badge bg-info text-dark" th:text="${d.estado}">ESTADO</span></td>
+              <td th:text="${d.ambiente}">-</td>
+              <td><a th:href="@{/defectos/{id}(id=${d.id})}" class="btn btn-sm btn-outline-secondary">Ver</a></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(defectos)}">
+              <td colspan="6" class="text-center text-muted py-4"><i class="bi bi-check-circle text-success me-1"></i>Sin defectos reportados.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div th:replace="~{fragments/base :: scripts}"></div>
+</body>
+</html>

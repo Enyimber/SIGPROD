@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/base :: head('Historia')}"></head>
+<body class="bg-light">
+<div th:replace="~{fragments/base :: navbar}"></div>
+<div class="container py-4" style="max-width:760px">
+  <div th:replace="~{fragments/base :: alertas}"></div>
+  <div class="card border-0 shadow-sm rounded-4">
+    <div class="card-header bg-white border-0 px-4 pt-4 pb-0 d-flex justify-content-between align-items-center">
+      <h5 class="fw-bold mb-0" th:text="${historia.titulo}">Historia</h5>
+      <span class="badge rounded-pill"
+            th:classappend="${historia.estado.name()=='BACKLOG'}?'bg-secondary':(${historia.estado.name()=='ACEPTADA'}?'bg-success':'bg-primary')"
+            th:text="${historia.estado}">E</span>
+    </div>
+    <div class="card-body p-4">
+      <p class="text-muted" th:text="${historia.narrativa?:'Sin narrativa.'}">N</p>
+      <div class="row g-3 mb-3">
+        <div class="col-md-4"><p class="text-muted small mb-0">Prioridad</p>
+          <span class="badge" th:classappend="${historia.prioridadMoscow?.name()=='MUST'}?'bg-danger':'bg-secondary'"
+                th:text="${historia.prioridadMoscow?:'--'}"></span></div>
+        <div class="col-md-4"><p class="text-muted small mb-0">Story Points</p>
+          <strong th:text="${historia.estimacionPuntos?:'-'}">-</strong></div>
+        <div class="col-md-4"><p class="text-muted small mb-0">Valor negocio</p>
+          <strong th:text="${historia.valorNegocio?:'-'}">-</strong></div>
+      </div>
+      <h6 class="fw-semibold mb-2">Criterios de aceptación</h6>
+      <div th:if="${historia.criteriosAceptacion.empty}" class="text-muted small">Sin criterios definidos.</div>
+      <ul class="list-group list-group-flush" th:unless="${historia.criteriosAceptacion.empty}">
+        <li class="list-group-item px-0" th:each="c:${historia.criteriosAceptacion}">
+          <span class="badge bg-secondary me-2" th:text="${c.tipo}">T</span>
+          <span th:text="${c.descripcion}">Desc</span>
+        </li>
+      </ul>
+      <div class="d-flex gap-2 mt-4">
+        <a th:href="@{/backlog/{id}(id=${historia.proyectoId})}" class="btn btn-outline-secondary rounded-pill">
+          <i class="bi bi-arrow-left me-1"></i>Volver al backlog</a>
+        <a th:href="@{/tareas/historia/{id}(id=${historia.id})}" class="btn btn-outline-primary rounded-pill">
+          <i class="bi bi-list-task me-1"></i>Ver tareas</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div th:replace="~{fragments/base :: scripts}"></div>
+</body>
+</html>

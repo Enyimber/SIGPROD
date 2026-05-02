@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/base :: head('Riesgos')}"></head>
+<body class="bg-light">
+<div th:replace="~{fragments/base :: navbar}"></div>
+<div class="container-fluid py-4 px-4">
+  <div th:replace="~{fragments/base :: alertas}"></div>
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <nav aria-label="breadcrumb"><ol class="breadcrumb mb-1">
+        <li class="breadcrumb-item"><a th:href="@{/proyectos}">Proyectos</a></li>
+        <li class="breadcrumb-item"><a th:href="@{/proyectos/{id}(id=${proyecto.id})}" th:text="${proyecto.nombre}">P</a></li>
+        <li class="breadcrumb-item active">Riesgos</li>
+      </ol></nav>
+      <h4 class="fw-bold mb-0"><i class="bi bi-exclamation-triangle text-warning me-2"></i>Matriz de Riesgos</h4>
+    </div>
+    <a th:href="@{/riesgos/proyecto/{id}/nuevo(id=${proyecto.id})}" class="btn btn-warning text-white">
+      <i class="bi bi-plus-lg me-1"></i>Nuevo Riesgo
+    </a>
+  </div>
+  <div class="card shadow-sm border-0 rounded-4">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead><tr><th>Descripción</th><th>Probabilidad</th><th>Impacto</th><th>Criticidad</th><th>Estado</th><th></th></tr></thead>
+          <tbody>
+            <tr th:each="r : ${riesgos}">
+              <td th:text="${r.descripcion}">Descripción</td>
+              <td>
+                <div class="progress" style="height:8px;width:80px">
+                  <div class="progress-bar bg-warning" th:style="'width:' + (${r.probabilidad} * 20) + '%'"></div>
+                </div>
+                <small th:text="${r.probabilidad} + '/5'">0/5</small>
+              </td>
+              <td>
+                <div class="progress" style="height:8px;width:80px">
+                  <div class="progress-bar bg-danger" th:style="'width:' + (${r.impacto} * 20) + '%'"></div>
+                </div>
+                <small th:text="${r.impacto} + '/5'">0/5</small>
+              </td>
+              <td>
+                <span class="badge"
+                      th:classappend="${r.criticidad >= 15} ? 'bg-danger' : (${r.criticidad} >= 8 ? 'bg-warning text-dark' : 'bg-success')"
+                      th:text="${r.criticidad}">0</span>
+              </td>
+              <td><span class="badge bg-secondary" th:text="${r.estado}">ESTADO</span></td>
+              <td><a th:href="@{/riesgos/{id}(id=${r.id})}" class="btn btn-sm btn-outline-secondary">Ver</a></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(riesgos)}">
+              <td colspan="6" class="text-center text-muted py-4">No hay riesgos registrados.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div th:replace="~{fragments/base :: scripts}"></div>
+</body>
+</html>

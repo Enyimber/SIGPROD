@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="es">
+<head th:replace="~{fragments/base :: head('Dashboard')}"></head>
+<body class="bg-light">
+ 
+<!-- Navbar -->
+<div th:replace="~{fragments/base :: navbar}"></div>
+ 
+<div class="container-fluid py-4 px-4">
+ 
+  <!-- Alertas flash -->
+  <div th:replace="~{fragments/base :: alertas}"></div>
+ 
+  <!-- Bienvenida -->
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h4 class="fw-bold mb-0">
+        <i class="bi bi-speedometer2 text-primary me-2"></i>Dashboard
+      </h4>
+      <p class="text-muted small mb-0">
+        Bienvenido,
+        <strong th:text="${usuario.nombres + ' ' + usuario.apellidos}">Usuario</strong>
+        &mdash;
+        <span class="badge bg-primary"
+              th:text="${usuario.rolSistema}">ROL</span>
+      </p>
+    </div>
+    <div class="text-muted small">
+      <i class="bi bi-calendar3 me-1"></i>
+      <span th:text="${#temporals.format(#temporals.createNow(), 'EEEE, d MMMM yyyy')}"></span>
+    </div>
+  </div>
+ 
+  <!-- ══ KPIs GLOBALES ═══════════════════════════════════ -->
+  <div class="row g-3 mb-4">
+ 
+    <!-- Proyectos activos -->
+    <div class="col-6 col-lg-3">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body d-flex align-items-center gap-3">
+          <div class="rounded-3 bg-primary bg-opacity-10 p-3">
+            <i class="bi bi-kanban text-primary fs-3"></i>
+          </div>
+          <div>
+            <p class="text-muted small mb-0">Proyectos activos</p>
+            <h3 class="fw-bold mb-0" th:text="${totalProyectos}">0</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- Usuarios -->
+    <div class="col-6 col-lg-3">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body d-flex align-items-center gap-3">
+          <div class="rounded-3 bg-success bg-opacity-10 p-3">
+            <i class="bi bi-people text-success fs-3"></i>
+          </div>
+          <div>
+            <p class="text-muted small mb-0">Usuarios activos</p>
+            <h3 class="fw-bold mb-0" th:text="${totalUsuarios}">0</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- Mis tareas -->
+    <div class="col-6 col-lg-3">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body d-flex align-items-center gap-3">
+          <div class="rounded-3 bg-warning bg-opacity-10 p-3">
+            <i class="bi bi-check2-square text-warning fs-3"></i>
+          </div>
+          <div>
+            <p class="text-muted small mb-0">Mis tareas totales</p>
+            <h3 class="fw-bold mb-0" th:text="${misTareas.size()}">0</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- En progreso -->
+    <div class="col-6 col-lg-3">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body d-flex align-items-center gap-3">
+          <div class="rounded-3 bg-info bg-opacity-10 p-3">
+            <i class="bi bi-arrow-repeat text-info fs-3"></i>
+          </div>
+          <div>
+            <p class="text-muted small mb-0">En progreso</p>
+            <h3 class="fw-bold mb-0" th:text="${tareasEnProgreso}">0</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- ══ SEGUNDA FILA: Proyectos + Mis Tareas ════════════ -->
+  <div class="row g-4">
+ 
+    <!-- Mis proyectos -->
+    <div class="col-12 col-lg-7">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-header bg-white border-0 pt-3 pb-0 px-4 d-flex justify-content-between align-items-center">
+          <h6 class="fw-bold mb-0"><i class="bi bi-folder2-open me-2 text-primary"></i>Mis proyectos</h6>
+          <a th:href="@{/proyectos}" class="btn btn-sm btn-outline-primary rounded-pill">
+            Ver todos <i class="bi bi-arrow-right ms-1"></i>
+          </a>
+        </div>
+        <div class="card-body px-4 pb-3">
+ 
+          <!-- Sin proyectos -->
+          <div th:if="${misProyectos.empty}" class="text-center text-muted py-4">
+            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+            No tienes proyectos asignados aún.
+          </div>
+ 
+          <!-- Lista de proyectos -->
+          <div th:each="proyecto : ${misProyectos}" class="sigprod-proyecto-card mb-3 p-3 rounded-3 border">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <a th:href="@{/proyectos/{id}(id=${proyecto.id})}"
+                   class="fw-semibold text-decoration-none text-dark"
+                   th:text="${proyecto.nombre}">Nombre</a>
+                <p class="text-muted small mb-1" th:text="${proyecto.cliente}">Cliente</p>
+                <span th:text="${proyecto.metodologia}"
+                      class="badge bg-secondary bg-opacity-10 text-secondary small"></span>
+              </div>
+              <div class="text-end">
+                <!-- Badge de estado -->
+                <span class="badge rounded-pill"
+                      th:classappend="${proyecto.estado.name() == 'ACTIVO'} ? 'bg-success' :
+                                      (${proyecto.estado.name() == 'PAUSADO'} ? 'bg-warning text-dark' : 'bg-secondary')"
+                      th:text="${proyecto.estado}">Estado</span>
+                <p class="text-muted small mt-1 mb-0">
+                  <i class="bi bi-calendar2 me-1"></i>
+                  <span th:text="${#temporals.format(proyecto.fechaFin, 'dd/MM/yyyy')}">--</span>
+                </p>
+              </div>
+            </div>
+          </div>
+ 
+        </div>
+      </div>
+    </div>
+ 
+    <!-- Mis tareas recientes -->
+    <div class="col-12 col-lg-5">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-header bg-white border-0 pt-3 pb-0 px-4 d-flex justify-content-between align-items-center">
+          <h6 class="fw-bold mb-0"><i class="bi bi-list-task me-2 text-warning"></i>Mis tareas recientes</h6>
+          <a th:href="@{/tareas/mis-tareas}" class="btn btn-sm btn-outline-warning rounded-pill">
+            Kanban <i class="bi bi-arrow-right ms-1"></i>
+          </a>
+        </div>
+        <div class="card-body px-4 pb-3">
+ 
+          <div th:if="${misTareas.empty}" class="text-center text-muted py-4">
+            <i class="bi bi-check2-all fs-1 d-block mb-2"></i>
+            No tienes tareas asignadas.
+          </div>
+ 
+          <ul class="list-unstyled mb-0">
+            <li th:each="tarea, stat : ${misTareas}"
+                th:if="${stat.index < 6}"
+                class="d-flex align-items-center justify-content-between py-2 border-bottom">
+              <div class="d-flex align-items-center gap-2">
+                <!-- Ícono por tipo -->
+                <i class="bi"
+                   th:classappend="${tarea.tipo?.name() == 'FRONTEND'}  ? 'bi-layout-text-window text-info' :
+                                   (${tarea.tipo?.name() == 'BACKEND'}  ? 'bi-server text-success' :
+                                   (${tarea.tipo?.name() == 'QA'}       ? 'bi-bug text-danger' :
+                                   (${tarea.tipo?.name() == 'DEVOPS'}   ? 'bi-gear text-warning' :
+                                    'bi-pencil text-secondary')))"></i>
+                <div>
+                  <p class="mb-0 small fw-semibold" th:text="${tarea.titulo}">Tarea</p>
+                  <span class="text-muted" style="font-size:.75rem"
+                        th:text="${tarea.tipo}">tipo</span>
+                </div>
+              </div>
+              <!-- Badge estado -->
+              <span class="badge rounded-pill small"
+                    th:classappend="${tarea.estado.name() == 'TODO'}         ? 'bg-secondary' :
+                                    (${tarea.estado.name() == 'IN_PROGRESS'} ? 'bg-primary' :
+                                    (${tarea.estado.name() == 'CODE_REVIEW'} ? 'bg-info text-dark' :
+                                    (${tarea.estado.name() == 'TESTING'}     ? 'bg-warning text-dark' :
+                                     'bg-success')))"
+                    th:text="${tarea.estado}">Estado</span>
+            </li>
+          </ul>
+ 
+        </div>
+      </div>
+    </div>
+ 
+  </div><!-- /row -->
+ 
+  <!-- ══ TERCERA FILA: Accesos rápidos por rol ══════════ -->
+  <div class="row g-3 mt-2">
+    <div class="col-12">
+      <h6 class="fw-bold text-muted mb-3"><i class="bi bi-lightning-charge me-1"></i>Accesos rápidos</h6>
+    </div>
+ 
+    <!-- Product Owner -->
+    <div class="col-6 col-md-4 col-lg-2" sec:authorize="hasAnyRole('ADMIN','PRODUCT_OWNER','PROJECT_MANAGER')">
+      <a th:href="@{/proyectos/nuevo}" class="card border-0 shadow-sm rounded-4 text-decoration-none sigprod-quick-card">
+        <div class="card-body text-center py-3">
+          <i class="bi bi-plus-circle fs-2 text-primary"></i>
+          <p class="small fw-semibold mt-2 mb-0 text-dark">Nuevo proyecto</p>
+        </div>
+      </a>
+    </div>
+ 
+    <!-- Backlog -->
+    <div class="col-6 col-md-4 col-lg-2">
+      <a th:href="@{/proyectos}" class="card border-0 shadow-sm rounded-4 text-decoration-none sigprod-quick-card">
+        <div class="card-body text-center py-3">
+          <i class="bi bi-journal-text fs-2 text-success"></i>
+          <p class="small fw-semibold mt-2 mb-0 text-dark">Ver Backlog</p>
+        </div>
+      </a>
+    </div>
+ 
+    <!-- Mis tareas -->
+    <div class="col-6 col-md-4 col-lg-2">
+      <a th:href="@{/tareas/mis-tareas}" class="card border-0 shadow-sm rounded-4 text-decoration-none sigprod-quick-card">
+        <div class="card-body text-center py-3">
+          <i class="bi bi-kanban fs-2 text-warning"></i>
+          <p class="small fw-semibold mt-2 mb-0 text-dark">Tablero Kanban</p>
+        </div>
+      </a>
+    </div>
+ 
+    <!-- Usuarios (solo ADMIN) -->
+    <div class="col-6 col-md-4 col-lg-2" sec:authorize="hasRole('ADMIN')">
+      <a th:href="@{/usuarios}" class="card border-0 shadow-sm rounded-4 text-decoration-none sigprod-quick-card">
+        <div class="card-body text-center py-3">
+          <i class="bi bi-people fs-2 text-danger"></i>
+          <p class="small fw-semibold mt-2 mb-0 text-dark">Gestión usuarios</p>
+        </div>
+      </a>
+    </div>
+ 
+    <!-- Nuevo usuario (solo ADMIN) -->
+    <div class="col-6 col-md-4 col-lg-2" sec:authorize="hasRole('ADMIN')">
+      <a th:href="@{/usuarios/nuevo}" class="card border-0 shadow-sm rounded-4 text-decoration-none sigprod-quick-card">
+        <div class="card-body text-center py-3">
+          <i class="bi bi-person-plus fs-2 text-info"></i>
+          <p class="small fw-semibold mt-2 mb-0 text-dark">Nuevo usuario</p>
+        </div>
+      </a>
+    </div>
+ 
+  </div><!-- /accesos rápidos -->
+ 
+</div><!-- /container -->
+ 
+<div th:replace="~{fragments/base :: scripts}"></div>
+</body>
+</html>

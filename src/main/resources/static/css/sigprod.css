@@ -1,0 +1,104 @@
+/* ============================================================
+   SIGPROD – TechSoft Solutions S.A.S.
+   sigprod.css
+   ============================================================ */
+:root {
+  --sp-primary:  #2563eb;
+  --sp-success:  #16a34a;
+  --sp-warning:  #d97706;
+  --sp-danger:   #dc2626;
+  --sp-bg:       #f1f5f9;
+  --sp-radius:   1rem;
+  --sp-shadow:   0 2px 12px rgba(0,0,0,.07);
+  --sp-transition: .18s ease;
+}
+
+body {
+  font-family: 'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+  background-color: var(--sp-bg);
+  color: #1e293b;
+  font-size: .9375rem;
+}
+
+/* scrollbar fina */
+::-webkit-scrollbar { width:6px; height:6px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:99px; }
+::-webkit-scrollbar-thumb:hover { background:#94a3b8; }
+
+/* Navbar */
+.navbar { min-height:56px; box-shadow:0 1px 8px rgba(0,0,0,.15); }
+.navbar-brand { font-size:1.15rem; letter-spacing:-.3px; }
+
+/* Cards */
+.card { border-radius:var(--sp-radius)!important; transition:box-shadow var(--sp-transition); }
+.card:hover { box-shadow:0 6px 20px rgba(0,0,0,.1)!important; }
+
+/* Proyecto card hover */
+.sigprod-proyecto-card { transition:transform var(--sp-transition),box-shadow var(--sp-transition); position:relative; }
+.sigprod-proyecto-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(37,99,235,.13)!important; }
+
+/* Quick access cards */
+.sigprod-quick-card { transition:transform var(--sp-transition),box-shadow var(--sp-transition); }
+.sigprod-quick-card:hover { transform:translateY(-4px); box-shadow:0 8px 20px rgba(0,0,0,.1)!important; }
+
+/* Kanban cards */
+.sigprod-kanban-card { transition:box-shadow var(--sp-transition); cursor:grab; }
+.sigprod-kanban-card:hover { box-shadow:0 4px 14px rgba(0,0,0,.1)!important; }
+
+/* Badges */
+.badge { font-weight:600; letter-spacing:.2px; }
+
+/* Botones */
+.btn-primary { background-color:var(--sp-primary); border-color:var(--sp-primary); }
+.btn-primary:hover { background-color:#1d4ed8; border-color:#1d4ed8; }
+
+/* Tablas */
+.table>:not(caption)>*>* { padding:.75rem 1rem; }
+.table thead th {
+  font-size:.8rem; text-transform:uppercase;
+  letter-spacing:.5px; color:#64748b; font-weight:600;
+}
+
+/* Formularios */
+.form-control,.form-select {
+  border-radius:.5rem; border-color:#e2e8f0; font-size:.9rem;
+  transition:border-color var(--sp-transition),box-shadow var(--sp-transition);
+}
+.form-control:focus,.form-select:focus {
+  border-color:var(--sp-primary);
+  box-shadow:0 0 0 3px rgba(37,99,235,.15);
+}
+.input-group-text { background-color:#f8fafc; border-color:#e2e8f0; color:#64748b; }
+
+/* Alertas */
+.alert { border-radius:.75rem; border:none; font-size:.9rem; }
+.alert-success { background:#dcfce7; color:#166534; }
+.alert-danger  { background:#fee2e2; color:#991b1b; }
+.alert-warning { background:#fef9c3; color:#854d0e; }
+.alert-info    { background:#dbeafe; color:#1e40af; }
+
+/* Nav tabs */
+.nav-tabs .nav-link {
+  color:#64748b; border:none; padding:.6rem 1.2rem;
+  font-weight:500; font-size:.9rem; transition:color var(--sp-transition);
+}
+.nav-tabs .nav-link.active {
+  color:var(--sp-primary); font-weight:600;
+  border-bottom:2px solid var(--sp-primary); background:transparent;
+}
+.nav-tabs .nav-link:hover:not(.active) {
+  color:#1e293b; background:#f1f5f9;
+  border-radius:.5rem .5rem 0 0;
+}
+
+/* Breadcrumb */
+.breadcrumb-item a { color:var(--sp-primary); text-decoration:none; }
+.breadcrumb-item a:hover { text-decoration:underline; }
+.breadcrumb-item.active { color:#64748b; }
+
+/* Responsivo */
+@media(max-width:576px){
+  .container-fluid.px-4 { padding-left:1rem!important; padding-right:1rem!important; }
+  h4.fw-bold { font-size:1.1rem; }
+}

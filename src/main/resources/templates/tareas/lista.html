@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/base :: head('Tareas')}"></head>
+<body class="bg-light">
+<div th:replace="~{fragments/base :: navbar}"></div>
+<div class="container-fluid py-4 px-4">
+  <div th:replace="~{fragments/base :: alertas}"></div>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0"><i class="bi bi-list-task text-primary me-2"></i>Tareas — <span th:text="${historia.titulo}">H</span></h4>
+    <a th:href="@{/tareas/historia/{id}/nueva(historiaId=${historia.id})}" class="btn btn-primary rounded-pill px-4">
+      <i class="bi bi-plus-lg me-1"></i>Nueva tarea</a>
+  </div>
+  <div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-light"><tr><th>Tarea</th><th>Tipo</th><th>Asignado</th><th>Horas</th><th>Estado</th><th class="text-end">Acciones</th></tr></thead>
+          <tbody>
+            <tr th:if="${tareas.empty}"><td colspan="6" class="text-center text-muted py-4">Sin tareas aún.</td></tr>
+            <tr th:each="t:${tareas}">
+              <td><a th:href="@{/tareas/{id}(id=${t.id})}" class="fw-semibold text-decoration-none text-dark" th:text="${t.titulo}">T</a></td>
+              <td><span class="badge bg-secondary bg-opacity-10 text-secondary" th:text="${t.tipo}">tipo</span></td>
+              <td class="small" th:text="${t.asignadoId?:'Sin asignar'}">-</td>
+              <td class="small"><span th:text="${t.horasEstimadas?:0}">0</span>h est. / <span th:text="${t.horasReales?:0}">0</span>h real</td>
+              <td><span class="badge rounded-pill"
+                    th:classappend="${t.estado.name()=='DONE'}?'bg-success':(${t.estado.name()=='IN_PROGRESS'}?'bg-primary':'bg-secondary')"
+                    th:text="${t.estado}">E</span></td>
+              <td class="text-end">
+                <a th:href="@{/tareas/{id}(id=${t.id})}" class="btn btn-sm btn-outline-primary rounded-pill"><i class="bi bi-eye"></i></a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div th:replace="~{fragments/base :: scripts}"></div>
+</body>
+</html>
