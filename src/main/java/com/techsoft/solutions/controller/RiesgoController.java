@@ -97,4 +97,23 @@ public class RiesgoController {
         flash.addFlashAttribute("successMsg", "Riesgo eliminado.");
         return "redirect:/riesgos/proyecto/" + proyectoId;
     }
+    
+    @GetMapping("/{id}/editar")
+    @PreAuthorize("hasAnyRole('ADMIN','PROJECT_MANAGER','ANALISTA')")
+    public String editarForm(@PathVariable String id, Model model) {
+
+        Riesgo r = riesgoService.buscarPorId(id)
+            .orElseThrow(() -> new RuntimeException("Riesgo no encontrado"));
+
+        model.addAttribute("riesgo", r);
+
+        model.addAttribute("proyecto",
+            proyectoService.buscarPorId(r.getProyectoId())
+                .orElseThrow(() -> new RuntimeException("Proyecto no encontrado")));
+
+        model.addAttribute("estados", Riesgo.EstadoRiesgo.values());
+        model.addAttribute("usuarios", usuarioService.listarActivos());
+
+        return "riesgos/formulario";
+    }
 }
